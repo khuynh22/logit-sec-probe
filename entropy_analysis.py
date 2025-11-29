@@ -80,8 +80,10 @@ def main():
     # Build data for DataFrame
     data = []
     for i, (token_id, score) in enumerate(zip(generated_tokens, scores)):
-        # Decode token text
-        token_text = tokenizer.decode(token_id.item())
+        # Get token representation using convert_ids_to_tokens for accurate display
+        token_text = tokenizer.convert_ids_to_tokens(token_id.item())
+        if token_text is None:
+            token_text = f"<{token_id.item()}>"
         
         # Calculate entropy from logits
         token_entropy = entropy(score[0])
@@ -107,11 +109,21 @@ def main():
     print("\nDataFrame saved to 'token_entropy_analysis.csv'")
     
     # Plot Heatmap
-    plt.figure(figsize=(max(12, len(df) * 0.5), 4))
+    # Cap figure width to prevent memory issues with long sequences
+    max_width = 20
+    fig_width = min(max_width, max(12, len(df) * 0.5))
+    plt.figure(figsize=(fig_width, 4))
     
     # Create heatmap data (reshape for single row heatmap)
     heatmap_data = df[["entropy"]].T
-    heatmap_data.columns = df["token"].tolist()
+    
+    # Use position-based labels to avoid issues with special characters or duplicates
+    # Tokens are shown in the x-axis labels
+    sanitized_labels = [
+        f"{i}:{t[:10]}" if len(t) > 10 else f"{i}:{t}"
+        for i, t in enumerate(df["token"].tolist())
+    ]
+    heatmap_data.columns = sanitized_labels
     
     # Plot heatmap with tokens on X-axis and entropy as color
     ax = sns.heatmap(
