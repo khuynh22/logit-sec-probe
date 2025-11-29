@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
-def entropy(logits: torch.Tensor) -> float:
+def entropy(logits: torch.Tensor) -> tuple[float, torch.Tensor]:
     """
     Calculate entropy from logits.
     
@@ -24,13 +24,13 @@ def entropy(logits: torch.Tensor) -> float:
         logits: Raw logits tensor from the model
         
     Returns:
-        Entropy value as a float
+        Tuple of (entropy value as float, probability tensor)
     """
     probs = torch.softmax(logits, dim=-1)
     # Add small epsilon to avoid log(0)
     log_probs = torch.log(probs + 1e-10)
     ent = -torch.sum(probs * log_probs).item()
-    return ent
+    return ent, probs
 
 
 def main():
@@ -81,15 +81,15 @@ def main():
     data = []
     for i, (token_id, score) in enumerate(zip(generated_tokens, scores)):
         # Get token representation using convert_ids_to_tokens for accurate display
-        token_text = tokenizer.convert_ids_to_tokens(token_id.item())
+        token_list = tokenizer.convert_ids_to_tokens([token_id.item()])
+        token_text = token_list[0] if token_list else f"<{token_id.item()}>"
         if token_text is None:
             token_text = f"<{token_id.item()}>"
         
-        # Calculate entropy from logits
-        token_entropy = entropy(score[0])
+        # Calculate entropy from logits and get probabilities
+        token_entropy, probs = entropy(score[0])
         
         # Get probability of selected token
-        probs = torch.softmax(score[0], dim=-1)
         token_prob = probs[token_id.item()].item()
         
         data.append({
