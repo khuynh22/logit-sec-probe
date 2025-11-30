@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  entropy-analysis:
+    build: .
+    container_name: logit-sec-probe
+    volumes:
+      # Mount output directory to get results on host
+      - ./output:/app/output
+      # Cache Hugging Face models to avoid re-downloading
+      - hf-cache:/app/.cache/huggingface
+    environment:
+      - PYTHONUNBUFFERED=1
+    # For GPU support, uncomment the following:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  hf-cache:
