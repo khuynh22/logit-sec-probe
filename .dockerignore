@@ -1,6 +1,10 @@
+# Git
+.git
+.gitignore
+
 # Output files
-token_entropy_analysis.csv
-token_entropy_heatmap.png
+*.csv
+*.png
 output/
 
 # Python
@@ -24,7 +28,6 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-.mypy_cache
 
 # Virtual environments
 venv/
@@ -39,3 +42,7 @@ env/
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Documentation
+README.md
+LICENSE
