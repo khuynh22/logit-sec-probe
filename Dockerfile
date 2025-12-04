@@ -19,6 +19,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY entropy_analysis.py .
 
+# Copy data directory
+COPY data/ ./data/
+
 # Create output directory
 RUN mkdir -p /app/output
 
