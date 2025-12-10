@@ -1,0 +1,12 @@
+# FastAPI and server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.5.0
+
+# ML dependencies (from parent requirements.txt)
+torch>=2.0.0
+transformers>=4.35.0
+accelerate>=0.24.0
+
+# Utilities
+python-multipart>=0.0.6

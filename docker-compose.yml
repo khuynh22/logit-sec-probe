@@ -1,9 +1,12 @@
 version: '3.8'
 
 services:
+  # Research script - entropy analysis batch job
   entropy-analysis:
-    build: .
-    container_name: logit-sec-probe
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logit-sec-probe-research
     volumes:
       # Mount output directory to get results on host
       - ./output:/app/output
@@ -11,6 +14,31 @@ services:
       - hf-cache:/app/.cache/huggingface
     environment:
       - PYTHONUNBUFFERED=1
+    # For GPU support, uncomment the following:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    profiles:
+      - research  # Only run when explicitly specified
+
+  # FastAPI backend - production API server
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: logit-sec-probe-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Cache Hugging Face models (shared with research service)
+      - hf-cache:/app/.cache/huggingface
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
     # For GPU support, uncomment the following:
     # deploy:
     #   resources:
