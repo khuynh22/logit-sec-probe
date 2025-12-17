@@ -26,7 +26,7 @@ services:
       - research  # Only run when explicitly specified
 
   # FastAPI backend - production API server
-  api:
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -39,6 +39,8 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
+    networks:
+      - app-network
     # For GPU support, uncomment the following:
     # deploy:
     #   resources:
@@ -47,6 +49,26 @@ services:
     #         - driver: nvidia
     #           count: 1
     #           capabilities: [gpu]
+
+  # Streamlit frontend - Security Observability Dashboard
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: logit-sec-probe-frontend
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   hf-cache:
