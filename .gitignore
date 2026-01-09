@@ -3,6 +3,9 @@ token_entropy_analysis.csv
 token_entropy_heatmap.png
 output/
 
+# VS Code Extension (moved to separate repo)
+code-confidence-extension/
+
 # Python
 __pycache__/
 *.py[cod]
