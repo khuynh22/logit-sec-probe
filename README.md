@@ -1,6 +1,10 @@
 # logit-sec-probe
 Statistical evaluation harness that analyzes LLM token entropy and log-probabilities to detect silent model uncertainty during insecure code generation.
 
+## 🔗 Related Projects
+
+**VS Code Extension**: The research from this project has been productized as [code-confidence-vscode](https://github.com/khuynh22/code-confidence-vscode) - a real-time VS Code extension that brings token-level confidence analysis directly into your editor while coding with AI assistants.
+
 ## Features
 
 - **A/B Testing Framework**: Compare model behavior with and without safety system prompts
